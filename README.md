@@ -1,3 +1,5 @@
+**This is a snapshot of Silq, providing the artifact for the PLDI'20 paper #431. For the latest version of Silq, refer to https://github.com/eth-sri/silq.**
+
 Artifact for PLDI'20 paper #431 
 ===============================
 
