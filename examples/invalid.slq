@@ -1,0 +1,42 @@
+// ../silq/silq invalid.slq
+// Figure 5.
+
+def useConsumed(x:𝔹){
+	y := H(x);    // consumes x
+	return (x,y); // error: undefined identifier x
+}
+
+def useConsumedFixed(const x:𝔹){
+	y:=H(x);
+	return (x,y); // ok
+}
+
+def discard[n:!ℕ](x:uint[n]){ // error: parameter 'x' is not consumed
+	y := x % 2;
+	return y;
+}
+
+def nonQfree(const x:𝔹,y:𝔹){
+	if H(x) { y := X(y); } // error: non-'lifted' quantum expression must be consumed
+	return y;
+}
+
+def nonConst(c:𝔹){
+	if X(c) { phase(π); } // error: non-'lifted' quantum expression must be consumed
+}
+
+def nonConstFixed(const x:𝔹){
+	if X(x) { phase(π); } // ok
+}
+
+def condMeas(const c:𝔹,x:𝔹){
+	if c { x := measure(x); } // error: cannot call function 'measure[𝔹]' in mfree context
+}
+
+def revMeas(){
+	return reverse(measure[𝔹]); // error: reversed function must be 'mfree'
+	// note: the example shown in the paper is simplified:
+	//  measure is a generic function and in a future version of Silq,
+	//  we plan to automatically rewrite the expression
+	//  `reverse(measure)` to the generic function [a]⇒reverse(measure[a])
+}

@@ -1,0 +1,31 @@
+def PeriodFinding[n:!ℕ](f:const uint[n] !→qfree uint[n]):!ℕ{
+	cand := 0:uint[n];
+	for k in [0..n) { cand[k] := H(cand[k]); } // typo in submission: ~= instead of :=
+	measure(f(cand));
+	cand := reverse(QFT[n])(cand);
+	return measure(cand) as !ℕ; // typo in submission: missing conversion to !ℕ
+}
+
+def QFT[n:!ℕ](x: uint[n])mfree: uint[n]{
+	for k in [0..n div 2){
+		(x[k],x[n-k-1]) := (x[n-k-1],x[k]);
+	}
+	for k in [0..n){
+		x[k] := H(x[k]);
+		for l in [k+1..n){
+			if x[l] && x[k]{
+				phase(2·π·2^(k-l-1));
+			}
+		}
+	}
+	return x;
+}
+
+def main(){
+	n:=7;
+	def oracle(x: uint[n])lifted{
+		return x%3;
+	}
+	p:=PeriodFinding(oracle);
+	return p%round(2^n/3); // 0 or 1 most of the time. (coincidentally, often 42.)
+}

@@ -1,0 +1,27 @@
+// ../silq/silq --run grover.slq
+// Figure 3.
+
+def groverDiffusion[n:!ℕ](cand:uint[n])mfree: uint[n]{
+	for k in [0..n) { cand[k] := H(cand[k]); }
+	if cand!=0{ phase(π); }
+	for k in [0..n) { cand[k] := H(cand[k]); }
+	return cand;
+}
+
+def grover[n:!ℕ](f: const uint[n] !→ lifted 𝔹):!ℕ{
+	nIterations:=floor(π/(4·asin(2^(-n/2))));
+	cand:=0:uint[n];
+    for k in [0..n){ cand[k]:=H(cand[k]); }
+	for k in [0..nIterations){
+		if f(cand){ phase(π); }
+		cand:=groverDiffusion(cand);
+	}
+	return measure(cand) as !ℕ;
+}
+
+def main(){
+	def oracle(x:uint[6])lifted{
+		return x%2=0 && x%3=0 && x%5≠0 && x%7=0;
+	}
+	return grover(oracle);
+}
